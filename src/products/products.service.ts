@@ -16,7 +16,9 @@ export class ProductsService {
   }
 
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product'
+    return this.collection.add(createProductDto).then((doc) => {
+      return { id: doc.id, ...createProductDto };
+    });
   }
 
   findAll() {

@@ -22,7 +22,7 @@ export class ProductsController {
     return this.productsService.create(createProductDto)
   }
 
-  @UseGuards(AuthGuard()) // Error cannot auth
+  // @UseGuards(AuthGuard()) // Error cannot auth
   @Get()
   findAll() {
     return this.productsService.findAll()
