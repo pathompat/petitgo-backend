@@ -7,8 +7,8 @@ import { AxiosResponse, AxiosRequestConfig } from 'axios'
 @Injectable()
 export class BigsellerService {
   constructor(
-    private readonly httpService: HttpService,
-    private configService: ConfigService,
+    private readonly http: HttpService,
+    private config: ConfigService,
   ) {}
 
   async getListProductShopee(): Promise<Observable<AxiosResponse<any[]>>> {
@@ -28,10 +28,11 @@ export class BigsellerService {
     const headers = {
       Accept: 'application/json, text/plain, */*',
       'Content-Type': 'application/json;charset=UTF-8',
-      Cookie: this.configService.get<string>('BIGSELLER_COOKIE'),
+      Cookie: this.config.get<string>('BIGSELLER_COOKIE'),
     }
+
     return await lastValueFrom(
-      this.httpService
+      this.http
         .get(
           'https://www.bigseller.com/api/v1/product/listing/shopee/active.json',
           { params, headers },
