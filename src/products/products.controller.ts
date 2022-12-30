@@ -12,10 +12,14 @@ import { AuthGuard } from '@nestjs/passport'
 import { ProductsService } from './products.service'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
+import { BigsellerService } from '../bigseller/bigseller.service'
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private bigsellerService: BigsellerService,
+  ) {}
 
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
@@ -24,8 +28,9 @@ export class ProductsController {
 
   @UseGuards(AuthGuard())
   @Get()
-  findAll() {
-    return this.productsService.findAll()
+  async findAll() {
+    const bigseller = await this.bigsellerService.getListProductShopee()
+    return { firestore: await this.productsService.findAll(), bigseller }
   }
 
   @Get(':id')

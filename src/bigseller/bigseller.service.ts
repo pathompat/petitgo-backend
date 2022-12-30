@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common'
-import { CreateBigsellerDto } from './dto/create-bigseller.dto'
-import { UpdateBigsellerDto } from './dto/update-bigseller.dto'
+import { Injectable, ForbiddenException } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { ConfigService } from '@nestjs/config'
+import { Observable, map, catchError, lastValueFrom } from 'rxjs'
+import { AxiosResponse, AxiosRequestConfig } from 'axios'
 
 @Injectable()
 export class BigsellerService {
-  create(createBigsellerDto: CreateBigsellerDto) {
-    return 'This action adds a new bigseller'
-  }
+  constructor(
+    private readonly httpService: HttpService,
+    private configService: ConfigService,
+  ) {}
 
-  findAll() {
-    return `This action returns all bigseller`
-  }
+  async getListProductShopee(): Promise<Observable<AxiosResponse<any[]>>> {
+    // get params copy from bigseller request
+    const params = {
+      orderBy: 'create_time',
+      desc: 'true',
+      searchType: 'productName',
+      inquireType: '0',
+      shopeeStatus: 'live',
+      status: 'active',
+      pageNo: '1',
+      pageSize: '50',
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} bigseller`
-  }
-
-  update(id: number, updateBigsellerDto: UpdateBigsellerDto) {
-    return `This action updates a #${id} bigseller`
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} bigseller`
+    // get an environment variable
+    const headers = {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      Cookie: this.configService.get<string>('BIGSELLER_COOKIE'),
+    }
+    return await lastValueFrom(
+      this.httpService
+        .get(
+          'https://www.bigseller.com/api/v1/product/listing/shopee/active.json',
+          { params, headers },
+        )
+        .pipe(map((res) => res.data?.data?.page?.rows || []))
+        .pipe(
+          catchError(() => {
+            throw new ForbiddenException('API not available')
+          }),
+        ),
+    )
   }
 }
