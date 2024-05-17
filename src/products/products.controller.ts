@@ -6,9 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common'
-import { AuthGuard } from '@nestjs/passport'
 import { ProductsService } from './products.service'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
@@ -26,7 +24,6 @@ export class ProductsController {
     return this.productsService.create(createProductDto)
   }
 
-  @UseGuards(AuthGuard())
   @Get()
   async findAll() {
     const bigseller = await this.bigsellerService.getListProductShopee()

@@ -4,7 +4,6 @@ import { UpdateProductDto } from './dto/update-product.dto'
 import { firestore } from 'firebase-admin'
 import { REQUEST } from '@nestjs/core'
 import { Product } from './entities/product.entity'
-import DocumentSnapshot = firestore.DocumentSnapshot
 import QuerySnapshot = firestore.QuerySnapshot
 
 @Injectable()
@@ -17,8 +16,8 @@ export class ProductsService {
 
   create(createProductDto: CreateProductDto) {
     return this.collection.add(createProductDto).then((doc) => {
-      return { id: doc.id, ...createProductDto };
-    });
+      return { id: doc.id, ...createProductDto }
+    })
   }
 
   findAll() {
@@ -43,7 +42,7 @@ export class ProductsService {
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`
+    return `This action updates a #${updateProductDto} product`
   }
 
   remove(id: number) {
