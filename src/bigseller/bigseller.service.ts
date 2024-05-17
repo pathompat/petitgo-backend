@@ -2,14 +2,20 @@ import { Injectable, ForbiddenException } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
 import { ConfigService } from '@nestjs/config'
 import { Observable, map, catchError, lastValueFrom } from 'rxjs'
-import { AxiosResponse, AxiosRequestConfig } from 'axios'
+import { AxiosResponse } from 'axios'
+import { firestore } from 'firebase-admin'
+import { WriteResult } from 'firebase-admin/firestore'
 
 @Injectable()
 export class BigsellerService {
+  private cookies: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>
+
   constructor(
     private readonly http: HttpService,
     private config: ConfigService,
-  ) {}
+  ) {
+    this.cookies = firestore().collection('cookies')
+  }
 
   async getListProductShopee(): Promise<Observable<AxiosResponse<any[]>>> {
     // get params copy from bigseller request
@@ -44,5 +50,18 @@ export class BigsellerService {
           }),
         ),
     )
+  }
+
+  async updateCookie(cookie: string): Promise<boolean> {
+    const collection = await this.cookies.get()
+    let result = true
+    await collection.forEach(async (doc) => {
+      const updateRes: WriteResult = await doc.ref.update({
+        cookie: cookie,
+        updatedAt: new Date(),
+      })
+      result = result && Boolean(updateRes)
+    })
+    return result
   }
 }
