@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common'
+import { Module, MiddlewareConsumer } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
+import { AuthMiddleware } from './middleware/auth.middleware'
 import { ProductsModule } from './products/products.module'
 import { BigsellerModule } from './bigseller/bigseller.module'
 
@@ -12,4 +13,8 @@ import { BigsellerModule } from './bigseller/bigseller.module'
     BigsellerModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('')
+  }
+}
