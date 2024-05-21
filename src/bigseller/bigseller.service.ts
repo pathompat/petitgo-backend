@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config'
 import { Observable, map, catchError, lastValueFrom } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { firestore } from 'firebase-admin'
-import { WriteResult } from 'firebase-admin/firestore'
 
 @Injectable()
 export class BigsellerService {
@@ -52,16 +51,19 @@ export class BigsellerService {
     )
   }
 
-  async updateCookie(cookie: string): Promise<boolean> {
+  async updateOrGetCookie(cookie: string): Promise<string> {
     const collection = await this.cookies.get()
-    let result = true
     await collection.forEach(async (doc) => {
-      const updateRes: WriteResult = await doc.ref.update({
+      if (!cookie || cookie === '') {
+        const existed = doc.data()
+        cookie = existed.cookie
+        return
+      }
+      await doc.ref.update({
         cookie: cookie,
         updatedAt: new Date(),
       })
-      result = result && Boolean(updateRes)
     })
-    return result
+    return cookie
   }
 }

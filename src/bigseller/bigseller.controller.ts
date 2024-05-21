@@ -1,13 +1,13 @@
-import { Controller, Body, Put } from '@nestjs/common'
+import { Controller, Query, Get } from '@nestjs/common'
 import { BigsellerService } from './bigseller.service'
-import { UpdateCookieDto } from './dto/update-cookie-dto'
 
 @Controller('bigseller')
 export class BigsellerController {
   constructor(private bigsellerService: BigsellerService) {}
 
-  @Put('/cookie')
-  async update(@Body() body: UpdateCookieDto) {
-    return await this.bigsellerService.updateCookie(body.cookie)
+  @Get('/cookie')
+  async update(@Query('cookie') cookie: string): Promise<string> {
+    const res = await this.bigsellerService.updateOrGetCookie(cookie)
+    return res
   }
 }
