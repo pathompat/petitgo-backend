@@ -60,7 +60,7 @@ export class BigsellerService {
         return
       }
       await doc.ref.update({
-        cookie: cookie,
+        cookie: 'muc_token=' + cookie + ';',
         updatedAt: new Date(),
       })
     })
