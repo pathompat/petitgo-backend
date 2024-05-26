@@ -51,19 +51,16 @@ export class BigsellerService {
     )
   }
 
-  async updateOrGetCookie(cookie: string): Promise<string> {
+  async updateCookie(cookie: string, session: string): Promise<boolean> {
+    let result = true
     const collection = await this.cookies.get()
     await collection.forEach(async (doc) => {
-      if (!cookie || cookie === '') {
-        const existed = doc.data()
-        cookie = existed.cookie
-        return
-      }
-      await doc.ref.update({
-        cookie: 'muc_token=' + cookie + ';',
+      const r: firestore.WriteResult = await doc.ref.update({
+        cookie: `muc_token=${cookie}; JSESSIONID=${session};`,
         updatedAt: new Date(),
       })
+      result = result && !!r.writeTime
     })
-    return cookie
+    return result
   }
 }

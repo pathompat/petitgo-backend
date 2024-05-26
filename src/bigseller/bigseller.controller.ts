@@ -6,8 +6,10 @@ export class BigsellerController {
   constructor(private bigsellerService: BigsellerService) {}
 
   @Get('/cookie')
-  async update(@Query('cookie') cookie: string): Promise<string> {
-    const res = await this.bigsellerService.updateOrGetCookie(cookie)
-    return res
+  async updateCookie(
+    @Query('cookie') cookie: string,
+    @Query('session') session: string,
+  ): Promise<boolean> {
+    return await this.bigsellerService.updateCookie(cookie, session)
   }
 }
