@@ -68,6 +68,7 @@ jobs:
         run: |
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
           echo "BIGSELLER_COOKIE=${{ secrets.BIGSELLER_COOKIE }}" >> .env
+          echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> .env
           echo "API_KEY=${{ secrets.API_KEY }}" >> .env
 
       - name: Deploy to Firebase Functions
